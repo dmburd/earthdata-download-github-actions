@@ -65,23 +65,23 @@ jobs:
         if: steps.auth.outputs.authorized == 'true'
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Setup uv
         if: steps.auth.outputs.authorized == 'true'
-        uses: actions/setup-python@v5
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: '3.10'
+          enable-cache: true # Automatic caching
+          cache-dependency-glob: "pyproject.toml"
 
       - name: Run Python Script
         if: steps.auth.outputs.authorized == 'true'
         id: run-script
         env:
-          # Pass the text to Python via an environment variable (the safest way)
           INPUT_PAYLOAD: ${{ steps.extract.outputs.text }}
         run: |
-          # Run the script from the repository and save its output (stdout) to a file
-          python -m src.main > result.txt
+          # The `uv run` command will automatically create an environment (.venv), 
+          # read pyproject.toml, install the required packages and run the script.
+          uv run -m src.main > result.txt
           
-          # Read the file and pass it to outputs for the next step
           echo "script_result<<EOF" >> $GITHUB_OUTPUT
           cat result.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
