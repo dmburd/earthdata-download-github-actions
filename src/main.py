@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import sys
 from datetime import datetime
 
@@ -44,7 +45,11 @@ def main():
     request_timestamp_str = None
 
     try:
-        json_data = json.loads(payload)
+        # Intelligently extract JSON from payload if it's wrapped in markdown or other text
+        match = re.search(r'\{.*\}', payload, re.DOTALL)
+        cleaned_payload = match.group(0) if match else payload
+        
+        json_data = json.loads(cleaned_payload)
 
         try:
             request_params = EarthdataDownloadVisualizeServiceRequest(**json_data)
@@ -66,7 +71,9 @@ def main():
             print("ERROR, you have sent a json that does not conform to the required input parameters schema")
             sys.exit(0)
 
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as e:
+        print(f"DEBUG: Failed payload was:\n{repr(payload)}")
+        print(f"DEBUG: Error details: {e}")
         print('ERROR, the received message is not a valid json neither the "help" word')
         sys.exit(0)
 
