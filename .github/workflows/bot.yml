@@ -1,0 +1,101 @@
+name: "Issue Comment Bot"
+
+on:
+  issues:
+    types: [opened]        # Triggers when a new issue is created
+  issue_comment:
+    types: [created]       # Triggers on a new comment
+
+# Grant write permissions so the bot can publish comments
+permissions:
+  issues: write
+
+jobs:
+  process-input:
+    # Loop protection: do not react to comments from the bot itself
+    if: github.event.sender.login != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Extract Author and Payload
+        id: extract
+        # Depending on the event, the text is located in different variables
+        run: |
+          if [ "${{ github.event_name }}" = "issue_comment" ]; then
+            echo "author=${{ github.event.comment.user.login }}" >> $GITHUB_OUTPUT
+            echo "issue_number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+            # Safe transfer of multi-line text
+            echo "text<<EOF" >> $GITHUB_OUTPUT
+            echo "${{ github.event.comment.body }}" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "author=${{ github.event.issue.user.login }}" >> $GITHUB_OUTPUT
+            echo "issue_number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+            echo "text<<EOF" >> $GITHUB_OUTPUT
+            echo "${{ github.event.issue.body }}" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check Whitelist
+        id: auth
+        env:
+          # Set the whitelist of accounts separated by commas (without spaces)
+          WHITELIST: ${{ secrets.USERNAMES_WHITELIST }}
+          AUTHOR: ${{ steps.extract.outputs.author }}
+        run: |
+          # Check if the author is in the whitelist
+          if [[ ",$WHITELIST," == *",$AUTHOR,"* ]]; then
+            echo "authorized=true" >> $GITHUB_OUTPUT
+          else
+            echo "authorized=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Reject Unauthorized User
+        if: steps.auth.outputs.authorized == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE: ${{ steps.extract.outputs.issue_number }}
+          AUTHOR: ${{ steps.extract.outputs.author }}
+        run: |
+          gh issue comment $ISSUE --body "Sorry @$AUTHOR, you are not allowed to trigger the workflow."
+
+      - name: Checkout Repository
+        # The following steps are only executed for authorized users
+        if: steps.auth.outputs.authorized == 'true'
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        if: steps.auth.outputs.authorized == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Run Python Script
+        if: steps.auth.outputs.authorized == 'true'
+        id: run-script
+        env:
+          # Pass the text to Python via an environment variable (the safest way)
+          INPUT_PAYLOAD: ${{ steps.extract.outputs.text }}
+        run: |
+          # Run the script from the repository and save its output (stdout) to a file
+          python -m src.main > result.txt
+          
+          # Read the file and pass it to outputs for the next step
+          echo "script_result<<EOF" >> $GITHUB_OUTPUT
+          cat result.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Post Success Comment
+        if: steps.auth.outputs.authorized == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE: ${{ steps.extract.outputs.issue_number }}
+          AUTHOR: ${{ steps.extract.outputs.author }}
+          RESULT: ${{ steps.run-script.outputs.script_result }}
+        run: |
+          gh issue comment $ISSUE --body "Hi @$AUTHOR, your input data has been processed!
+          
+          **Result:**
+          \`\`\`text
+          $RESULT
+          \`\`\`"
