@@ -95,9 +95,4 @@ jobs:
           AUTHOR: ${{ steps.extract.outputs.author }}
           RESULT: ${{ steps.run-script.outputs.script_result }}
         run: |
-          gh issue comment $ISSUE --body "Hi @$AUTHOR, your input data has been processed!
-          
-          **Result:**
-          \`\`\`text
-          $RESULT
-          \`\`\`"
+          gh issue comment $ISSUE --body "$RESULT"
