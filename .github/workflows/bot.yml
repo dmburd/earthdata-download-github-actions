@@ -54,6 +54,7 @@ jobs:
         if: steps.auth.outputs.authorized == 'false'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
           ISSUE: ${{ steps.extract.outputs.issue_number }}
           AUTHOR: ${{ steps.extract.outputs.author }}
         run: |
@@ -89,6 +90,7 @@ jobs:
         if: steps.auth.outputs.authorized == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
           ISSUE: ${{ steps.extract.outputs.issue_number }}
           AUTHOR: ${{ steps.extract.outputs.author }}
           RESULT: ${{ steps.run-script.outputs.script_result }}
