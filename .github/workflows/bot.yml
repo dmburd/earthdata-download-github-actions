@@ -19,6 +19,9 @@ jobs:
     steps:
       - name: Extract Author and Payload
         id: extract
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
         # Depending on the event, the text is located in different variables
         run: |
           if [ "${{ github.event_name }}" = "issue_comment" ]; then
@@ -26,13 +29,13 @@ jobs:
             echo "issue_number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
             # Safe transfer of multi-line text
             echo "text<<EOF" >> $GITHUB_OUTPUT
-            echo "${{ github.event.comment.body }}" >> $GITHUB_OUTPUT
+            echo "$COMMENT_BODY" >> $GITHUB_OUTPUT
             echo "EOF" >> $GITHUB_OUTPUT
           else
             echo "author=${{ github.event.issue.user.login }}" >> $GITHUB_OUTPUT
             echo "issue_number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
             echo "text<<EOF" >> $GITHUB_OUTPUT
-            echo "${{ github.event.issue.body }}" >> $GITHUB_OUTPUT
+            echo "$ISSUE_BODY" >> $GITHUB_OUTPUT
             echo "EOF" >> $GITHUB_OUTPUT
           fi
 
