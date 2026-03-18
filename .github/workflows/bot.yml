@@ -81,7 +81,7 @@ jobs:
           EARTHDATA_PASSWORD: ${{ secrets.EARTHDATA_PASSWORD }}
           EDL_TOKEN: ${{ secrets.EDL_TOKEN }}
           SAVED_RESULTS_ROOTDIR: ${{ secrets.SAVED_RESULTS_ROOTDIR }}
-          MAX_NUM_REQUESTS_PER_SEC: ${{ vars.EARTHDATA_MAX_NUM_REQUESTS_PER_SEC }}
+          EARTHDATA_MAX_NUM_REQUESTS_PER_SEC: ${{ vars.EARTHDATA_MAX_NUM_REQUESTS_PER_SEC }}
         run: |
           # The `uv run` command will automatically create an environment (.venv), 
           # read pyproject.toml, install the required packages and run the script.
