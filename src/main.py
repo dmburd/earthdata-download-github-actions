@@ -18,7 +18,7 @@ def main():
 
     if not payload.strip():
         print("Error: No input data provided.")
-        sys.exit(1)
+        sys.exit(0)
 
     normalized_content = payload.strip().lower()
 
@@ -61,14 +61,14 @@ def main():
                 print(f"ERROR, the provided parameters failed validation:\n\n{error_details}")
             else:
                 print("ERROR, you have sent a json that does not conform to the required input parameters schema")
-            sys.exit(1)
+            sys.exit(0)
         except Exception:
             print("ERROR, you have sent a json that does not conform to the required input parameters schema")
-            sys.exit(1)
+            sys.exit(0)
 
     except json.JSONDecodeError:
         print('ERROR, the received message is not a valid json neither the "help" word')
-        sys.exit(1)
+        sys.exit(0)
 
     track_fname_to_arr_dict = None
     if request_params:
@@ -77,7 +77,7 @@ def main():
             track_fname_to_arr_dict = get_earthdata_results(request_params, request_timestamp_str)
         except Exception as e:
             print(f"ERROR during processing the request:\n\n{str(e)}")
-            sys.exit(1)
+            sys.exit(0)
 
     if track_fname_to_arr_dict is not None and request_params is not None:
         track_fname_to_arr_dict = dict(
