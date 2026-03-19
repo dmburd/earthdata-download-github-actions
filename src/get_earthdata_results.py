@@ -15,6 +15,7 @@ from src.config import (
     EARTHDATA_MAX_NUM_REQUESTS_PER_SEC,
     EDL_TOKEN,
     LOCAL_SAVED_RESULTS_ROOTDIR,
+    B2_SAVED_RESULTS_ROOTDIR,
 )
 from src.pydantic_models import EarthdataDownloadVisualizeServiceRequest
 from src.utils.common import (
