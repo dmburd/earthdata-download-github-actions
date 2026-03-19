@@ -113,11 +113,11 @@ def main():
 
     if request_params:
         if track_fname_to_arr_dict is not None:
-            # save_output_files(
-            #     request_params,
-            #     track_fname_to_arr_dict,
-            #     request_timestamp_str,
-            # )
+            save_output_files(
+                request_params,
+                track_fname_to_arr_dict,
+                request_timestamp_str,
+            )
 
             saved_output_files_info = (
                 f"The following files were saved to `<b2_saved_results_rootdir>/{request_timestamp_str}/`:\n"

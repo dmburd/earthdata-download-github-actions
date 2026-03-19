@@ -9,7 +9,7 @@ b2_api.authorize_account("production", B2_ACCOUNT_ID, B2_APPLICATION_KEY)
 
 # Get the bucket by name and upload your local file
 B2_BUCKET = b2_api.get_bucket_by_name(B2_BUCKET_NAME)
-print(f"{B2_BUCKET=}")
+#print(f"{B2_BUCKET=}")
 # local_file_path = "path/to/your/local_artifact.HDF5"
 # b2_file_name = "remote_folder/remote_artifact.HDF5"
 
