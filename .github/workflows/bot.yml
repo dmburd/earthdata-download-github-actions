@@ -85,6 +85,9 @@ jobs:
           EDL_TOKEN: ${{ secrets.EDL_TOKEN }}
           SAVED_RESULTS_ROOTDIR: ${{ secrets.SAVED_RESULTS_ROOTDIR }}
           EARTHDATA_MAX_NUM_REQUESTS_PER_SEC: ${{ vars.EARTHDATA_MAX_NUM_REQUESTS_PER_SEC }}
+          B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+          B2_ACCOUNT_ID: ${{ secrets.B2_ACCOUNT_ID }}
+          B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
         run: |
           # The `uv run` command will automatically create an environment (.venv), 
           # read pyproject.toml, install the required packages and run the script.
