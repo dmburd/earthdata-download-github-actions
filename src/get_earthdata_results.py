@@ -194,7 +194,6 @@ def _write_track_to_hdf5_per_track(output_path: Path, track_fname: str, var_dict
     )
 
 
-
 def get_earthdata_results(
     request_params: EarthdataDownloadVisualizeServiceRequest,
     request_timestamp_str: str | None = None,
