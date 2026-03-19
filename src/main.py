@@ -24,21 +24,36 @@ def main():
     normalized_content = payload.strip().lower()
 
     if normalized_content == "help":
-        print("The required messages format can be seen from an example below:\n")
-        print("```json")
-        print("{")
-        print('    "lat_min": "59.5",')
-        print('    "lat_max": "62.0",')
-        print('    "lon_min": "29.5",')
-        print('    "lon_max": "33.0",')
-        print('    "date_min": "2026-01-01",')
-        print('    "date_max": "2026-01-03",')
-        print('    "product": "FS",')
-        print('    "observable_vars": [')
-        print('        "/FS/VER/sigmaZeroNPCorrected"')
-        print("    ]")
-        print("}")
-        print("```")
+        print(
+            "The required messages format can be understood from the examples below:\n\n"
+            "```json\n"
+            "{\n"
+            '    "lat_min": "59.5",\n'
+            '    "lat_max": "62.0",\n'
+            '    "lon_min": "29.5",\n'
+            '    "lon_max": "33.0",\n'
+            '    "date_min": "2026-01-01",\n'
+            '    "date_max": "2026-01-03",\n'
+            '    "product_short_name": "GPM_2ADPR",\n'
+            '    "product": "FS",\n'
+            '    "observable_vars": [\n'
+            '        "/FS/VER/sigmaZeroNPCorrected",\n'
+            '        "/FS/SLV/precipRateNearSurface"\n'
+            "    ]\n"
+            "}\n"
+            "```"
+            "\n"
+            "```json\n"
+            "{\n"
+            '    # coords and dates as above\n'
+            '    "product_short_name": "GPM_2ADPRENV",\n'
+            '    "product": "FS",\n'
+            '    "observable_vars": [\n'
+            '        "/FS/VERENV/surfaceWind"\n'
+            "    ]\n"
+            "}\n"
+            "```"
+        )
         sys.exit(0)
 
     request_params = None
@@ -54,7 +69,7 @@ def main():
         try:
             request_params = EarthdataDownloadVisualizeServiceRequest(**json_data)
             request_timestamp_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-            print(f"OK, received a valid json with input parameters.\nTimestamp: `{request_timestamp_str}`.\nWait for the processing results.\n")
+            # print(f"OK, received a valid json with input parameters.\nTimestamp: `{request_timestamp_str}`.\nWait for the processing results.\n")
         except ValidationError as e:
             if all(err["type"] == "value_error" for err in e.errors()):
                 error_msgs = []
@@ -125,6 +140,7 @@ def main():
                 display_tracks = track_numbers
 
             display_str = "[{}]".format(", ".join(display_tracks))
+            print("The processing results are the following.")
             print(f"There are {len(track_numbers)} relevant tracks:\n{display_str}\n\n{saved_output_files_info}")
         else:
             print("No processing results to send / save")

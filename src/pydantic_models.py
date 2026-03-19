@@ -45,6 +45,14 @@ class EarthdataDownloadVisualizeServiceRequest(BaseModel):
             "2022-12-31",
         ],
     )
+    product_short_name: str = Field(
+        default="GPM_2ADPR",
+        description=("The short name of the Earthdata product to download."),
+        examples=[
+            "GPM_2ADPR",
+            "GPM_2ADPRENV",
+        ],
+    )
     product: str = Field(
         description=("The product identifier (e.g., 'FS' for a specific dataset)."),
         examples=[
