@@ -95,8 +95,14 @@ def save_output_files(
     with open(output_path / "input_request.json", "w") as f:
         json.dump(request_params.model_dump(), f, default=str, indent=4)
 
+    relpath = (output_path / "input_request.json").relative_to(LOCAL_SAVED_RESULTS_ROOTDIR)
+    print(f"{relpath=}")
+
     # (2) Save output dict structure
     save_output_dict_structure(track_fname_to_arr_dict, output_path)
 
     # (3) Save few tracks visualized
     save_few_tracks_visualized(request_params, track_fname_to_arr_dict, output_path)
+
+    relpath = output_path.relative_to(LOCAL_SAVED_RESULTS_ROOTDIR)
+    print(f"{relpath=}")

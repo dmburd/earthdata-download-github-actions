@@ -125,7 +125,6 @@ def main():
                 "- `output_structure.json` — the structure of the saved output data\n"
                 "- `tracks_hdf5/*.HDF5` — the HDF5 files containing the requested arrays\n"
                 "- `few_tracks_visualized.html` — the HTML file with a few tracks visualized\n"
-                "```"
             )
 
             track_numbers = sorted(
