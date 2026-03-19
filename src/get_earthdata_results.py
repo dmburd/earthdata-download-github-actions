@@ -183,7 +183,7 @@ def _write_track_to_hdf5_per_track(output_path: Path, track_fname: str, var_dict
             grp.create_dataset(dset_name, data=np_arr, compression="gzip", compression_opts=4)
 
     relpath = h5_path.relative_to(LOCAL_SAVED_RESULTS_ROOTDIR)
-    print(f"{relpath=}")
+    #print(f"{relpath=}")
 
 
 def get_earthdata_results(

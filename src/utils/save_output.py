@@ -112,6 +112,8 @@ def save_output_files(
 
     relpath = output_path.relative_to(LOCAL_SAVED_RESULTS_ROOTDIR)
 
+    print(f"local_file = {output_path / 'input_request.json'}")
+    print(f"file_name = {relpath / 'input_request.json'}")
     B2_BUCKET.upload_local_file(
         local_file=output_path / "input_request.json",
         file_name=relpath / "input_request.json",
