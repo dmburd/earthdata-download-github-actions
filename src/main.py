@@ -120,7 +120,7 @@ def main():
             # )
 
             saved_output_files_info = (
-                f"The following files were saved to `<saved_results_rootdir>/{request_timestamp_str}/`:\n"
+                f"The following files were saved to `<b2_saved_results_rootdir>/{request_timestamp_str}/`:\n"
                 "- `input_request.json` — the input parameters that you provided\n"
                 "- `output_structure.json` — the structure of the saved output data\n"
                 "- `tracks_hdf5/*.HDF5` — the HDF5 files containing the requested arrays\n"

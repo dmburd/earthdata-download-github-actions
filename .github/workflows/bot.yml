@@ -83,7 +83,7 @@ jobs:
           EARTHDATA_LOGIN: ${{ secrets.EARTHDATA_LOGIN }}
           EARTHDATA_PASSWORD: ${{ secrets.EARTHDATA_PASSWORD }}
           EDL_TOKEN: ${{ secrets.EDL_TOKEN }}
-          SAVED_RESULTS_ROOTDIR: ${{ secrets.SAVED_RESULTS_ROOTDIR }}
+          B2_SAVED_RESULTS_ROOTDIR: ${{ secrets.B2_SAVED_RESULTS_ROOTDIR }}
           EARTHDATA_MAX_NUM_REQUESTS_PER_SEC: ${{ vars.EARTHDATA_MAX_NUM_REQUESTS_PER_SEC }}
           B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
           B2_ACCOUNT_ID: ${{ secrets.B2_ACCOUNT_ID }}

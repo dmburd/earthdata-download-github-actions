@@ -14,7 +14,7 @@ from pydap.net import create_session
 from src.config import (
     EARTHDATA_MAX_NUM_REQUESTS_PER_SEC,
     EDL_TOKEN,
-    SAVED_RESULTS_ROOTDIR,
+    LOCAL_SAVED_RESULTS_ROOTDIR,
 )
 from src.pydantic_models import EarthdataDownloadVisualizeServiceRequest
 from src.utils.common import (
@@ -263,7 +263,7 @@ def get_earthdata_results(
 
             # Save downloaded tracks of the current batch sequentially
             if request_timestamp_str is not None and request_params is not None:
-                output_path = Path(SAVED_RESULTS_ROOTDIR) / request_timestamp_str
+                output_path = Path(LOCAL_SAVED_RESULTS_ROOTDIR) / request_timestamp_str
                 hdf5_dir = output_path / "tracks_hdf5"
                 hdf5_dir.mkdir(parents=True, exist_ok=True)
                 for future in futures.keys():

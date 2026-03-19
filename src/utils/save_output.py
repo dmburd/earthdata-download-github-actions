@@ -6,7 +6,7 @@ from bokeh.layouts import column
 from bokeh.plotting import output_file, save
 from loguru import logger
 
-from src.config import SAVED_RESULTS_ROOTDIR
+from src.config import LOCAL_SAVED_RESULTS_ROOTDIR
 from src.pydantic_models import (
     EarthdataDownloadVisualizeServiceRequest,
     VisualizationSettings,
@@ -88,7 +88,7 @@ def save_output_files(
     """
     Saves outputs to disk.
     """
-    output_path = Path(SAVED_RESULTS_ROOTDIR) / output_dir
+    output_path = Path(LOCAL_SAVED_RESULTS_ROOTDIR) / output_dir
     output_path.mkdir(parents=True, exist_ok=True)
 
     # (1) Save input request
