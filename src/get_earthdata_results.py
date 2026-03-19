@@ -4,6 +4,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
+import earthaccess
 import h5py
 import numpy as np
 from loguru import logger
@@ -16,10 +17,37 @@ from src.config import (
     SAVED_RESULTS_ROOTDIR,
 )
 from src.pydantic_models import EarthdataDownloadVisualizeServiceRequest
-from src.utils.common import create_requested_var_names
-from src.utils.earthdata import get_search_data_results
+from src.utils.common import (
+    _ensure_numpy,
+    _make_hdf5_path_from_field,
+    _sanitize_track_basename,
+    create_requested_var_names,
+)
 
 pp = pprint.PrettyPrinter(indent=4, width=200)
+
+
+def get_search_data_results(
+    request_params: EarthdataDownloadVisualizeServiceRequest,
+) -> list[str]:
+    temporal = (
+        f"{request_params.date_min}T00:00:00Z",
+        f"{request_params.date_max}T23:59:59Z",
+    )
+
+    results = earthaccess.search_data(
+        short_name=request_params.product_short_name,
+        bounding_box=(
+            request_params.lon_min,
+            request_params.lat_min,
+            request_params.lon_max,
+            request_params.lat_max,
+        ),
+        temporal=temporal,
+        count=-1,
+    )
+
+    return results
 
 
 def _process_granule(
@@ -126,30 +154,6 @@ def _process_granule_with_retry(
                 logger.error(f"Failed to process {track_fname} after {max_retries} attempts: {e}")
                 raise
 
-
-def _sanitize_track_basename(track_fname: str) -> str:
-    # remove path separators and extension to use as HDF5 group/file base name
-    base = Path(track_fname).name
-    # remove or replace characters that might be awkward in group names
-    return base.replace("/", "_").replace("\\", "_")
-
-def _make_hdf5_path_from_field(field_name: str) -> list[str]:
-    """
-    Convert a field name like 'FS_VER_sigmaZeroNPCorrected' or 'FS_Latitude'
-    into a list describing the path components: ['FS', 'VER', 'sigmaZeroNPCorrected']
-    """
-    # split on underscore — assumes fields begin with 'FS_...' as in your example
-    parts = field_name.split("_")
-    return parts
-
-def _ensure_numpy(arr):
-    if isinstance(arr, np.ndarray):
-        return arr
-    try:
-        return np.asarray(arr)
-    except Exception:
-        # fallback: try to serialize to string
-        return np.array(str(arr))
 
 def _write_track_to_hdf5_per_track(output_path: Path, track_fname: str, var_dict: dict):
     """

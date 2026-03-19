@@ -80,8 +80,6 @@ def save_few_tracks_visualized(
         logger.info("No track figures were generated")
 
 
-
-
 def save_output_files(
     request_params: EarthdataDownloadVisualizeServiceRequest,
     track_fname_to_arr_dict: dict[str, dict[str, np.ndarray]],

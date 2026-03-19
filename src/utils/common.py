@@ -1,6 +1,9 @@
 import os
 import re
 from datetime import datetime
+from pathlib import Path
+
+import numpy as np
 
 from src.pydantic_models import EarthdataDownloadVisualizeServiceRequest
 
@@ -81,3 +84,30 @@ def extract_track_start_timestamp_from_h5_url_or_fpath(
     second = int(start[4:6])
 
     return datetime(year, month, day, hour, minute, second)
+
+
+def _sanitize_track_basename(track_fname: str) -> str:
+    # remove path separators and extension to use as HDF5 group/file base name
+    base = Path(track_fname).name
+    # remove or replace characters that might be awkward in group names
+    return base.replace("/", "_").replace("\\", "_")
+
+
+def _make_hdf5_path_from_field(field_name: str) -> list[str]:
+    """
+    Convert a field name like 'FS_VER_sigmaZeroNPCorrected' or 'FS_Latitude'
+    into a list describing the path components: ['FS', 'VER', 'sigmaZeroNPCorrected']
+    """
+    # split on underscore — assumes fields begin with 'FS_...' as in your example
+    parts = field_name.split("_")
+    return parts
+
+
+def _ensure_numpy(arr):
+    if isinstance(arr, np.ndarray):
+        return arr
+    try:
+        return np.asarray(arr)
+    except Exception:
+        # fallback: try to serialize to string
+        return np.array(str(arr))
