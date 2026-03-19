@@ -23,6 +23,7 @@ from src.utils.common import (
     _sanitize_track_basename,
     create_requested_var_names,
 )
+from src.utils.b2 import B2_BUCKET
 
 pp = pprint.PrettyPrinter(indent=4, width=200)
 
@@ -183,7 +184,14 @@ def _write_track_to_hdf5_per_track(output_path: Path, track_fname: str, var_dict
             grp.create_dataset(dset_name, data=np_arr, compression="gzip", compression_opts=4)
 
     relpath = h5_path.relative_to(LOCAL_SAVED_RESULTS_ROOTDIR)
-    #print(f"{relpath=}")
+    
+    b2_file_path = Path(B2_SAVED_RESULTS_ROOTDIR) / relpath
+
+    B2_BUCKET.upload_local_file(
+        local_file=h5_path,
+        file_name=str(b2_file_path),
+    )
+
 
 
 def get_earthdata_results(

@@ -36,15 +36,16 @@ def save_output_dict_structure(
             output_str_lines.append("    }")
     output_str_lines.append("}")
 
-    with open(output_path / "output_dict_structure.json", "w") as f:
+    fname = "output_dict_structure.json"
+    with open(output_path / fname, "w") as f:
         f.write("\n".join(output_str_lines) + "\n")
 
     relpath = output_path.relative_to(LOCAL_SAVED_RESULTS_ROOTDIR)
 
-    b2_file_path = Path(B2_SAVED_RESULTS_ROOTDIR) / relpath / "output_dict_structure.json"
+    b2_file_path = Path(B2_SAVED_RESULTS_ROOTDIR) / relpath / fname
 
     B2_BUCKET.upload_local_file(
-        local_file=output_path / "output_dict_structure.json",
+        local_file=output_path / fname,
         file_name=str(b2_file_path),
     )
 
@@ -79,8 +80,10 @@ def save_few_tracks_visualized(
             )
         )
 
+    fname = "few_tracks_visualized.html"
+
     if track_figures:
-        combined_html_path = output_path / "few_tracks_visualized.html"
+        combined_html_path = output_path / fname
         output_file(combined_html_path, title="Few Tracks Visualized")
         save(column(*track_figures, sizing_mode="stretch_width"))
         logger.info(
@@ -91,10 +94,10 @@ def save_few_tracks_visualized(
 
     relpath = output_path.relative_to(LOCAL_SAVED_RESULTS_ROOTDIR)
 
-    b2_file_path = Path(B2_SAVED_RESULTS_ROOTDIR) / relpath / "few_tracks_visualized.html"
+    b2_file_path = Path(B2_SAVED_RESULTS_ROOTDIR) / relpath / fname
 
     B2_BUCKET.upload_local_file(
-        local_file=output_path / "few_tracks_visualized.html",
+        local_file=output_path / fname,
         file_name=str(b2_file_path),
     )
 
@@ -111,19 +114,18 @@ def save_output_files(
     output_path.mkdir(parents=True, exist_ok=True)
 
     # (1) Save input request
-    with open(output_path / "input_request.json", "w") as f:
+    fname = "input_request.json"
+    with open(output_path / fname, "w") as f:
         json.dump(request_params.model_dump(), f, default=str, indent=4)
 
     relpath = output_path.relative_to(LOCAL_SAVED_RESULTS_ROOTDIR)
 
-    b2_file_path = Path(B2_SAVED_RESULTS_ROOTDIR) / relpath / "input_request.json"
+    b2_file_path = Path(B2_SAVED_RESULTS_ROOTDIR) / relpath / fname
 
     B2_BUCKET.upload_local_file(
-        local_file=output_path / "input_request.json",
+        local_file=output_path / fname,
         file_name=str(b2_file_path),
     )
-    print(f"local_file = {output_path / 'input_request.json'}")
-    print(f"file_name = {b2_file_path}")
 
     # (2) Save output dict structure
     save_output_dict_structure(track_fname_to_arr_dict, output_path)
