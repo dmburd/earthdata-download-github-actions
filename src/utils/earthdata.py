@@ -12,7 +12,8 @@ def get_search_data_results(
     )
 
     results = earthaccess.search_data(
-        short_name="GPM_2ADPR",
+        #short_name="GPM_2ADPR",
+        short_name="GPM_2ADPRENV",
         bounding_box=(
             request_params.lon_min,
             request_params.lat_min,

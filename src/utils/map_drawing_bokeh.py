@@ -272,9 +272,10 @@ def draw_points_colorbar(
         line_color=None,
     )
 
-    observable_print_name = request_params.observable_name_to_colorbar_title[
-        request_params.observable_vars[0]
-    ]
+    observable_print_name = request_params.observable_name_to_colorbar_title.get(
+        request_params.observable_vars[0],
+        request_params.observable_vars[0],
+    )
 
     if vis_settings.add_hover_tool:
         tooltips = [

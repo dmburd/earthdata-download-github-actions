@@ -103,7 +103,7 @@ def _process_granule_with_retry(
     requested_vars_underscores: list[str],
     request_params: EarthdataDownloadVisualizeServiceRequest,
     token: str,
-    max_retries: int = 3,
+    max_retries: int = 12,
 ):
     """Wrapper around _process_granule with retry logic to handle transient network errors."""
     for attempt in range(max_retries):

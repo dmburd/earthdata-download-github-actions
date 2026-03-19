@@ -107,19 +107,9 @@ def main():
             saved_output_files_info = (
                 f"The following files were saved to `<saved_results_rootdir>/{request_timestamp_str}/`:\n"
                 "- `input_request.json` — the input parameters that you provided\n"
-                "- `output_dict_structure.json` — the structure of the saved dict object (`track_fname_to_arr_dict`)\n"
-                "- `track_fname_to_arr_dict.npz` — the dictionary mapping track filenames to array dicts\n"
-                "- `few_tracks_visualized.html` — the HTML file with a few tracks visualized\n\n"
-                "Read the contents of the file `track_fname_to_arr_dict.npz` in the following way:\n"
-                "```python\n"
-                "track_fname_to_arr_dict = np.load(\n"
-                "    'track_fname_to_arr_dict.npz',\n"
-                "    allow_pickle=True\n"
-                ")\n"
-                "track_fname_to_arr_dict = {\n"
-                "    k: v.item()\n"
-                "    for k, v in track_fname_to_arr_dict.items()\n"
-                "}\n"
+                "- `output_structure.json` — the structure of the saved output data\n"
+                "- `tracks_hdf5/*.HDF5` — the HDF5 files containing the requested arrays\n"
+                "- `few_tracks_visualized.html` — the HTML file with a few tracks visualized\n"
                 "```"
             )
 
