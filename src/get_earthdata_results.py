@@ -1,5 +1,6 @@
 import os
 import pprint
+import random
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -12,19 +13,19 @@ from pydap.client import open_url
 from pydap.net import create_session
 
 from src.config import (
+    B2_SAVED_RESULTS_ROOTDIR,
     EARTHDATA_MAX_NUM_REQUESTS_PER_SEC,
     EDL_TOKEN,
     LOCAL_SAVED_RESULTS_ROOTDIR,
-    B2_SAVED_RESULTS_ROOTDIR,
 )
 from src.pydantic_models import EarthdataDownloadVisualizeServiceRequest
+from src.utils.b2 import B2_BUCKET
 from src.utils.common import (
     _ensure_numpy,
     _make_hdf5_path_from_field,
     _sanitize_track_basename,
     create_requested_var_names,
 )
-from src.utils.b2 import B2_BUCKET
 
 pp = pprint.PrettyPrinter(indent=4, width=200)
 
@@ -150,7 +151,8 @@ def _process_granule_with_retry(
                 logger.warning(
                     f"Error processing {track_fname} (attempt {attempt + 1}/{max_retries}): {e}. Retrying in {2 ** attempt}s..."
                 )
-                time.sleep(2 ** attempt)
+                jitter = random.uniform(0, 1)
+                time.sleep((2 ** attempt) + jitter)
             else:
                 track_fname = opendap_url_no_slicing.split("?")[0].split("/")[-1]
                 logger.error(f"Failed to process {track_fname} after {max_retries} attempts: {e}")
@@ -185,7 +187,7 @@ def _write_track_to_hdf5_per_track(output_path: Path, track_fname: str, var_dict
             grp.create_dataset(dset_name, data=np_arr, compression="gzip", compression_opts=4)
 
     relpath = h5_path.relative_to(LOCAL_SAVED_RESULTS_ROOTDIR)
-    
+
     b2_file_path = Path(B2_SAVED_RESULTS_ROOTDIR) / relpath
 
     B2_BUCKET.upload_local_file(

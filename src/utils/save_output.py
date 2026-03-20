@@ -6,14 +6,14 @@ from bokeh.layouts import column
 from bokeh.plotting import output_file, save
 from loguru import logger
 
-from src.config import LOCAL_SAVED_RESULTS_ROOTDIR, B2_SAVED_RESULTS_ROOTDIR
+from src.config import B2_SAVED_RESULTS_ROOTDIR, LOCAL_SAVED_RESULTS_ROOTDIR
 from src.pydantic_models import (
     EarthdataDownloadVisualizeServiceRequest,
     VisualizationSettings,
 )
+from src.utils.b2 import B2_BUCKET
 from src.utils.common import extract_track_number_from_h5_url_or_fpath
 from src.utils.visualization import visualize_single_track
-from src.utils.b2 import B2_BUCKET
 
 
 def save_output_dict_structure(

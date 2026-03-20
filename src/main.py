@@ -4,7 +4,6 @@ import re
 import sys
 from datetime import datetime
 
-
 from pydantic import ValidationError
 
 from src.get_earthdata_results import get_earthdata_results
@@ -63,7 +62,7 @@ def main():
         # Intelligently extract JSON from payload if it's wrapped in markdown or other text
         match = re.search(r'\{.*\}', payload, re.DOTALL)
         cleaned_payload = match.group(0) if match else payload
-        
+
         json_data = json.loads(cleaned_payload)
 
         try:
