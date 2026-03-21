@@ -76,7 +76,7 @@ Go to your fork's **Settings → Secrets and variables → Actions → Variables
 
 | Variable Name | Description | Example |
 |---|---|---|
-| `EARTHDATA_MAX_NUM_REQUESTS_PER_SEC` | Maximum number of concurrent requests per second to the Earthdata API. Recommended values: `50` or `70`. | `70` |
+| `EARTHDATA_MAX_NUM_REQUESTS_PER_SEC` | Maximum number of concurrent requests per second to the Earthdata API. Recommended values: `40` or less. | `40` |
 
 > [!NOTE]
 > Variables (as opposed to secrets) are not masked in logs. `EARTHDATA_MAX_NUM_REQUESTS_PER_SEC` is safe to store as a variable because it contains no sensitive data.
@@ -199,13 +199,16 @@ If you want to run the script locally instead of via GitHub Actions:
 
 1. **Install [uv](https://docs.astral.sh/uv/getting-started/installation/)** (the fast Python package manager).
 
-2. **Copy and fill in the environment file:**
+2. **Fill in your credentials in `.env`:**
+
+   The `.env` file is your **personal scratchpad** for local credentials — it is listed in `.gitignore` and never committed to version control. Copy the example template and fill in your real values:
    ```bash
    cp .env.example .env
    # Edit .env with your actual credentials
    ```
+   The project uses [`python-dotenv`](https://pypi.org/project/python-dotenv/) to load `.env` automatically at startup, so no manual `export` commands are needed. In GitHub Actions, environment variables are injected from repository secrets instead, and the `.env` file is not present — `load_dotenv()` is a no-op in that context.
 
-3. **Run the script:**
+3. **Set the input payload and run:**
    ```bash
    export INPUT_PAYLOAD='{"lat_min":"59.5","lat_max":"62.0","lon_min":"29.5","lon_max":"33.0","date_min":"2026-01-01","date_max":"2026-01-03","product_short_name":"GPM_2ADPR","product":"FS","observable_vars":["/FS/VER/sigmaZeroNPCorrected"]}'
    uv run -m src.main

@@ -1,5 +1,11 @@
 import os
 
+from dotenv import load_dotenv
+
+# Loads variables from .env when running locally; no-op in GitHub Actions
+# (where env vars are injected from repository secrets/variables).
+load_dotenv()
+
 LOCAL_SAVED_RESULTS_ROOTDIR = os.getcwd()
 B2_SAVED_RESULTS_ROOTDIR = os.getenv("B2_SAVED_RESULTS_ROOTDIR")
 
