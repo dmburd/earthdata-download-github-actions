@@ -1,6 +1,6 @@
 # earthdata-download-github-actions
 
-Downloading selected datasets (arrays) from [NASA Earthdata](https://www.earthdata.nasa.gov/) using GitHub Actions, with automatic upload of results to [Backblaze B2](https://www.backblaze.com/cloud-storage) cloud storage.
+Downloading selected datasets (arrays) from [NASA Earthdata](https://www.earthdata.nasa.gov/) using GitHub Actions. Results are always available as a GitHub artifact ZIP download. Optionally, results can also be automatically uploaded to [Backblaze B2](https://www.backblaze.com/cloud-storage) cloud storage.
 
 ## How It Works
 
@@ -9,8 +9,9 @@ This repository provides a **GitHub Actions–based bot** that listens to GitHub
 1. Searches NASA Earthdata for matching satellite tracks (e.g., GPM DPR data).
 2. Downloads the relevant HDF5 arrays.
 3. Generates an interactive HTML visualization (using Bokeh + Cartopy).
-4. Uploads all results (HDF5 files, visualization, metadata) to a Backblaze B2 bucket.
-5. Posts a summary comment back into the GitHub Issue.
+4. Uploads all results as a GitHub Actions artifact (ZIP archive, available for download for 7 days).
+5. _(Optional)_ Uploads all results to a Backblaze B2 bucket, if B2 credentials are configured.
+6. Posts a summary comment back into the GitHub Issue, including a download link.
 
 ---
 
@@ -31,7 +32,12 @@ Before setting up the workflow, you need the following accounts and resources:
   2. Navigate to **"Generate Token"** (or visit [https://urs.earthdata.nasa.gov/documentation/for_users/user_token](https://urs.earthdata.nasa.gov/documentation/for_users/user_token)).
   3. Copy the generated token — you will need it for the `EDL_TOKEN` secret.
 
-### 3. Backblaze B2 Account & Bucket
+### 3. Backblaze B2 Account & Bucket _(Optional)_
+
+> [!NOTE]
+> B2 is **not required**. If you skip this step, results will still be uploaded as a GitHub Actions artifact (a ZIP archive downloadable directly from the workflow run page for 7 days).
+
+If you want results to also be uploaded to B2 cloud storage:
 
 - Sign up at [Backblaze B2 Cloud Storage](https://www.backblaze.com/sign-up/cloud-storage).
 - **Create a bucket**:
@@ -57,7 +63,9 @@ Before setting up the workflow, you need the following accounts and resources:
 
 ### Step 2 — Configure Repository Secrets
 
-Go to your fork's **Settings → Secrets and variables → Actions → Secrets** tab and add the following **repository secrets**:
+Go to your fork's **Settings → Secrets and variables → Actions → Secrets** tab and add the following **repository secrets**.
+
+**Required secrets:**
 
 | Secret Name | Description | Example (fake) |
 |---|---|---|
@@ -65,6 +73,14 @@ Go to your fork's **Settings → Secrets and variables → Actions → Secrets**
 | `EARTHDATA_LOGIN` | Your NASA Earthdata account login (email or username). | `john.doe@university.edu` |
 | `EARTHDATA_PASSWORD` | Your NASA Earthdata account password. | `MySecureP@ssw0rd!` |
 | `EDL_TOKEN` | Earthdata Login (EDL) Bearer Token for API authentication. | `eyJ0eXAiOiJKV1QiLCJhbGci...` (long JWT string) |
+
+**Optional secrets (B2 upload only):**
+
+> [!NOTE]
+> These four secrets are only needed if you want results to be uploaded to Backblaze B2. If they are not set, B2 upload is skipped and results are only available as a GitHub Actions artifact ZIP.
+
+| Secret Name | Description | Example (fake) |
+|---|---|---|
 | `B2_BUCKET_NAME` | Name of your Backblaze B2 bucket where results will be uploaded. | `my-earthdata-results` |
 | `B2_ACCOUNT_ID` | Backblaze B2 Application Key ID (keyID). | `004a1b2c3d4e5f0000000001` |
 | `B2_APPLICATION_KEY` | Backblaze B2 Application Key (the secret key). | `K004xYzAbCdEfGhIjKlMnOpQrStUvWx` |
@@ -160,7 +176,7 @@ Post a JSON object as the issue body or as a comment. The JSON specifies the geo
 ### What Happens After Triggering
 
 1. **Authorization check** — the bot verifies the comment author is in the `USERNAMES_WHITELIST`. Unauthorized users receive a rejection comment.
-2. **Processing** — if authorized, the Python script runs: it queries Earthdata, downloads matching HDF5 data, generates visualizations, and uploads results to B2.
+2. **Processing** — if authorized, the Python script runs: it queries Earthdata, downloads matching HDF5 data, and generates visualizations. Results are uploaded as a GitHub Actions artifact. If the B2 secrets are configured, results are also uploaded to your B2 bucket.
 3. **Result comment** — the bot posts a comment with the number of tracks found, a list of saved output files, and a **direct download link** to the results archive:
    - `input_request.json` — the input parameters you provided.
    - `output_structure.json` — the structure of the saved output data.
