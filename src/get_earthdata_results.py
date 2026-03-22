@@ -190,10 +190,11 @@ def _write_track_to_hdf5_per_track(output_path: Path, track_fname: str, var_dict
 
     b2_file_path = Path(B2_SAVED_RESULTS_ROOTDIR) / relpath
 
-    B2_BUCKET.upload_local_file(
-        local_file=h5_path,
-        file_name=str(b2_file_path),
-    )
+    if B2_BUCKET is not None:
+        B2_BUCKET.upload_local_file(
+            local_file=h5_path,
+            file_name=str(b2_file_path),
+        )
 
 
 def get_earthdata_results(
