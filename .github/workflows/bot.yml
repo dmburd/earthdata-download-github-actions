@@ -89,13 +89,26 @@ jobs:
           B2_ACCOUNT_ID: ${{ secrets.B2_ACCOUNT_ID }}
           B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
         run: |
-          # The `uv run` command will automatically create an environment (.venv), 
+          # The `uv run` command will automatically create an environment (.venv),
           # read pyproject.toml, install the required packages and run the script.
           uv run -m src.main > result.txt
-          
+
           echo "script_result<<EOF" >> $GITHUB_OUTPUT
           cat result.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+
+          # Detect the timestamped output directory created by the script
+          OUTPUT_DIR=$(ls -d [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_[0-9][0-9]-[0-9][0-9]-[0-9][0-9] 2>/dev/null | head -1)
+          echo "output_dir=$OUTPUT_DIR" >> $GITHUB_OUTPUT
+
+      - name: Upload Result Files
+        if: steps.auth.outputs.authorized == 'true' && steps.run-script.outputs.output_dir != ''
+        id: upload-results
+        uses: actions/upload-artifact@v4
+        with:
+          name: results-${{ steps.run-script.outputs.output_dir }}
+          path: ${{ steps.run-script.outputs.output_dir }}
+          retention-days: 7
 
       - name: Post Success Comment
         if: steps.auth.outputs.authorized == 'true'
@@ -105,5 +118,11 @@ jobs:
           ISSUE: ${{ steps.extract.outputs.issue_number }}
           AUTHOR: ${{ steps.extract.outputs.author }}
           RESULT: ${{ steps.run-script.outputs.script_result }}
+          ARTIFACT_URL: ${{ steps.upload-results.outputs.artifact-url }}
         run: |
-          gh issue comment $ISSUE --body "$RESULT"
+          if [ -n "$ARTIFACT_URL" ]; then
+            BODY="${RESULT}"$'\n\n'"**Download results:** [results archive](${ARTIFACT_URL}) _(available for 7 days, login required)_"
+          else
+            BODY="$RESULT"
+          fi
+          gh issue comment $ISSUE --body "$BODY"
