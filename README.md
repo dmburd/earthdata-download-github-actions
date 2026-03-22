@@ -161,11 +161,12 @@ Post a JSON object as the issue body or as a comment. The JSON specifies the geo
 
 1. **Authorization check** — the bot verifies the comment author is in the `USERNAMES_WHITELIST`. Unauthorized users receive a rejection comment.
 2. **Processing** — if authorized, the Python script runs: it queries Earthdata, downloads matching HDF5 data, generates visualizations, and uploads results to B2.
-3. **Result comment** — the bot posts a comment with the number of tracks found and a list of saved output files:
+3. **Result comment** — the bot posts a comment with the number of tracks found, a list of saved output files, and a **direct download link** to the results archive:
    - `input_request.json` — the input parameters you provided.
    - `output_structure.json` — the structure of the saved output data.
    - `tracks_hdf5/*.HDF5` — downloaded HDF5 files with the requested arrays.
    - `few_tracks_visualized.html` — an interactive HTML visualization of a few tracks.
+   - **Download results** — a clickable link to download all results as a ZIP archive (available for 7 days, requires being logged into GitHub).
 
 ---
 
