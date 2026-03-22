@@ -227,7 +227,19 @@ If you want to run the script locally instead of via GitHub Actions:
 
 3. **Set the input payload and run:**
    ```bash
-   export INPUT_PAYLOAD='{"lat_min":"59.5","lat_max":"62.0","lon_min":"29.5","lon_max":"33.0","date_min":"2026-01-01","date_max":"2026-01-03","product_short_name":"GPM_2ADPR","product":"FS","observable_vars":["/FS/VER/sigmaZeroNPCorrected"]}'
+   export INPUT_PAYLOAD='{
+       "lat_min": "59.5",
+       "lat_max": "62.0",
+       "lon_min": "29.5",
+       "lon_max": "33.0",
+       "date_min": "2026-01-01",
+       "date_max": "2026-01-03",
+       "product_short_name": "GPM_2ADPR",
+       "product": "FS",
+       "observable_vars": [
+           "/FS/VER/sigmaZeroNPCorrected"
+       ]
+   }'
    uv run -m src.main
    ```
    *Note: `uv run` will automatically create and sync a virtual environment based on `pyproject.toml` — you do NOT need to create it manually.*
