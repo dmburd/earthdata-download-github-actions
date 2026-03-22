@@ -8,6 +8,7 @@ from pydantic import ValidationError
 
 from src.get_earthdata_results import get_earthdata_results
 from src.pydantic_models import EarthdataDownloadVisualizeServiceRequest
+from src.utils.b2 import B2_BUCKET
 from src.utils.common import extract_track_number_from_h5_url_or_fpath
 from src.utils.save_output import save_output_files
 
@@ -118,13 +119,22 @@ def main():
                 request_timestamp_str,
             )
 
-            saved_output_files_info = (
-                f"The following files were saved to `<b2_saved_results_rootdir>/{request_timestamp_str}/`:\n"
+            files_list = (
                 "- `input_request.json` — the input parameters that you provided\n"
                 "- `output_structure.json` — the structure of the saved output data\n"
                 "- `tracks_hdf5/*.HDF5` — the HDF5 files containing the requested arrays\n"
                 "- `few_tracks_visualized.html` — the HTML file with a few tracks visualized\n"
             )
+            if B2_BUCKET is not None:
+                saved_output_files_info = (
+                    f"The following files were saved to `<b2_saved_results_rootdir>/{request_timestamp_str}/`:\n"
+                    + files_list
+                )
+            else:
+                saved_output_files_info = (
+                    f"The following files were saved (available as a ZIP download from the workflow run):\n"
+                    + files_list
+                )
 
             track_numbers = sorted(
                 [

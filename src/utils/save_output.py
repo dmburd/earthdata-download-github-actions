@@ -44,10 +44,11 @@ def save_output_dict_structure(
 
     b2_file_path = Path(B2_SAVED_RESULTS_ROOTDIR) / relpath / fname
 
-    B2_BUCKET.upload_local_file(
-        local_file=output_path / fname,
-        file_name=str(b2_file_path),
-    )
+    if B2_BUCKET is not None:
+        B2_BUCKET.upload_local_file(
+            local_file=output_path / fname,
+            file_name=str(b2_file_path),
+        )
 
 
 def save_few_tracks_visualized(
@@ -96,10 +97,11 @@ def save_few_tracks_visualized(
 
     b2_file_path = Path(B2_SAVED_RESULTS_ROOTDIR) / relpath / fname
 
-    B2_BUCKET.upload_local_file(
-        local_file=output_path / fname,
-        file_name=str(b2_file_path),
-    )
+    if B2_BUCKET is not None:
+        B2_BUCKET.upload_local_file(
+            local_file=output_path / fname,
+            file_name=str(b2_file_path),
+        )
 
 
 def save_output_files(
@@ -122,10 +124,11 @@ def save_output_files(
 
     b2_file_path = Path(B2_SAVED_RESULTS_ROOTDIR) / relpath / fname
 
-    B2_BUCKET.upload_local_file(
-        local_file=output_path / fname,
-        file_name=str(b2_file_path),
-    )
+    if B2_BUCKET is not None:
+        B2_BUCKET.upload_local_file(
+            local_file=output_path / fname,
+            file_name=str(b2_file_path),
+        )
 
     # (2) Save output dict structure
     save_output_dict_structure(track_fname_to_arr_dict, output_path)
