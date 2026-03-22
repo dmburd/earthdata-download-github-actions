@@ -15,6 +15,8 @@ jobs:
     # Loop protection: do not react to comments from the bot itself
     if: github.event.sender.login != 'github-actions[bot]'
     runs-on: ubuntu-24.04
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: Extract Author and Payload
